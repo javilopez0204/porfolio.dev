@@ -1,0 +1,39 @@
+---
+import ExperienceItem from "./ExperienceItem.astro"
+const EDUCATION = [
+  {
+    date: "Actualmente cursando",
+    title: "Máster en Inteligencia Artificial",
+    company: "EDEM Escuela de Empresarios",
+    description: "",
+  },
+  {
+    date: "Abril 2024 – Julio 2024",
+    title: "Diploma de extensión universitaria en Inteligencia Artificial",
+    company: "Universidad Politécnica – Samsung Innovation Campus",
+    description: "",
+  },
+  {
+    date: "Septiembre 2020 – Julio 2024",
+    title: "Graduado en Ingeniería Electrónica Industrial y Automática",
+    company: "Universidad Politécnica de Valencia",
+    description: "",
+  },
+  {
+    date: "Septiembre 2014 – Junio 2020",
+    title: "Enseñanzas profesionales en Percusión",
+    company: "Conservatorio Profesional de Música de Torrent",
+    description: "",
+  },
+]
+---
+
+<ol class="relative mt-16">
+  {
+    EDUCATION.map((education) => (
+      <li class="">
+        <ExperienceItem {...education} />
+      </li>
+    ))
+  }
+</ol>
