@@ -12,6 +12,8 @@ import Hero from "@/components/Hero.astro"
 import TitleSection from "@/components/TitleSection.astro"
 import Education from "@/components/Education.astro"
 import Skills from "@/components/Skills.astro"
+import Contact from "@/components/Contact.astro"
+import MailIcon from "@/components/icons/Mail.astro"
 ---
 
 <Layout
@@ -62,6 +64,14 @@ import Skills from "@/components/Skills.astro"
         Sobre mí
       </TitleSection>
       <AboutMe />
+    </SectionContainer>
+
+    <SectionContainer id="contacto">
+      <TitleSection>
+        <MailIcon class="size-8" />
+        Contacto
+      </TitleSection>
+      <Contact />
     </SectionContainer>
   </div>
   </main>

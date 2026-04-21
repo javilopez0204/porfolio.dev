@@ -1,0 +1,97 @@
+---
+import MailIcon from "@/components/icons/Mail.astro"
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+---
+<form id="contact-form" class="w-full max-w-2xl flex flex-col gap-4">
+  <div class="flex flex-col gap-2">
+    <label for="user_name" class="text-sm font-semibold text-gray-800 dark:text-gray-200">Nombre</label>
+    <input type="text" id="user_name" name="user_name" required
+      class="w-full p-3 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500 transition" 
+      placeholder="Tu nombre completo" />
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="user_email" class="text-sm font-semibold text-gray-800 dark:text-gray-200">Correo Electrónico</label>
+    <input type="email" id="user_email" name="user_email" required
+      class="w-full p-3 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500 transition" 
+      placeholder="tucorreo@ejemplo.com" />
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <label for="message" class="text-sm font-semibold text-gray-800 dark:text-gray-200">Mensaje</label>
+    <textarea id="message" name="message" rows="4" required
+      class="w-full p-3 text-sm text-gray-900 bg-gray-50 border border-gray-300 rounded-lg focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500 transition resize-none" 
+      placeholder="¿En qué puedo ayudarte?"></textarea>
+  </div>
+
+  <button type="submit" 
+    class="inline-flex items-center justify-center gap-2 px-4 py-2 mt-2 text-gray-800 transition bg-gray-100 border border-gray-300 rounded-full dark:bg-gray-800 dark:border-gray-600 dark:text-white focus-visible:ring-yellow-500/80 text-md hover:bg-gray-900 hover:border-gray-700 hover:text-white dark:hover:bg-gray-100 dark:hover:border-gray-300 dark:hover:text-black group w-full sm:w-auto self-start focus:outline-none focus-visible:outline-none focus-visible:ring focus-visible:ring-white focus-visible:ring-offset-2 active:bg-black">
+    <MailIcon class="size-4" />
+    Enviar Mensaje
+  </button>
+  <p id="form-status" class="hidden mt-2 text-sm font-semibold"></p>
+</form>
+
+<script is:inline type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script is:inline define:vars={{ SERVICE_ID, TEMPLATE_ID, PUBLIC_KEY }}>
+  (function() {
+    emailjs.init({
+      publicKey: PUBLIC_KEY,
+    });
+  })();
+
+  const form = document.getElementById('contact-form');
+  
+  form?.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      
+      const btn = form.querySelector('button[type="submit"]');
+      const statusText = document.getElementById('form-status');
+
+      const originalText = btn.innerHTML;
+      btn.innerHTML = 'Enviando...';
+      btn.disabled = true;
+
+      const data = {
+        subject: 'Nuevo mensaje de contacto',
+        name: form.user_name.value,
+        email: form.user_email.value,
+        message: form.message.value
+      };
+
+      try {
+          await emailjs.send(
+              SERVICE_ID,
+              TEMPLATE_ID,
+              {
+                  title: data.subject,
+                  name: data.name,
+                  email: data.email,
+                  message: data.message,
+                  time: new Date().toLocaleString('es-ES'),
+              },
+              {
+                  publicKey: PUBLIC_KEY,
+              }
+          );
+          
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          statusText.classList.remove('hidden', 'text-red-600', 'dark:text-red-400');
+          statusText.classList.add('text-green-600', 'dark:text-green-400');
+          statusText.textContent = '¡Mensaje enviado con éxito! Me pondré en contacto contigo pronto.';
+          form.reset();
+          setTimeout(() => statusText.classList.add('hidden'), 5000);
+      } catch (error) {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          statusText.classList.remove('hidden', 'text-green-600', 'dark:text-green-400');
+          statusText.classList.add('text-red-600', 'dark:text-red-400');
+          statusText.textContent = 'Error: ' + (error.text || error.message || JSON.stringify(error));
+          console.log('FAILED...', error);
+      }
+  });
+</script>
